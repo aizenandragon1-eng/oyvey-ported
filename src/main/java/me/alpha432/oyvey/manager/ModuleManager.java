@@ -10,6 +10,8 @@ import me.alpha432.oyvey.features.modules.client.ClickGui;
 import me.alpha432.oyvey.features.modules.client.HudEditor;
 import me.alpha432.oyvey.features.modules.client.Notifications;
 import me.alpha432.oyvey.features.modules.combat.Criticals;
+import me.alpha432.oyvey.features.modules.combat.AutoTotem;
+import me.alpha432.oyvey.features.modules.combat.AutoAnchor;
 import me.alpha432.oyvey.features.modules.hud.Coordinates;
 import me.alpha432.oyvey.features.modules.hud.Watermark;
 import me.alpha432.oyvey.features.modules.misc.MCF;
@@ -30,19 +32,30 @@ public class ModuleManager implements Jsonable, Util {
     private final List<Module> modules = new ArrayList<>();
 
     public void init() {
+        // Client Modules
         register(new Watermark());
         register(new Coordinates());
         register(new HudEditor());
         register(new ClickGui());
         register(new Notifications());
+
+        // Combat Modules
         register(new Criticals());
+        register(new AutoTotem());
+        register(new AutoAnchor());
         register(new MCF());
+
+        // Movement Modules
         register(new Step());
         register(new ReverseStep());
+
+        // Player Modules
         register(new FastPlace());
         register(new Velocity());
-        register(new BlockHighlight());
         register(new NoFall());
+
+        // Render Modules
+        register(new BlockHighlight());
     }
 
     public void register(Module module) {

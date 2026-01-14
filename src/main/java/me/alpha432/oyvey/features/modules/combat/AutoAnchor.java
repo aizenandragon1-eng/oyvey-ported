@@ -1,40 +1,35 @@
 package me.alpha432.oyvey.features.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
+import me.alpha432.oyvey.features.setting.Setting;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 
 public class AutoAnchor extends Module {
+    public Setting<Long> delay = register(new Setting<>("Delay", 150L, 50L, 1000L));
 
     public AutoAnchor() {
-        super("AutoAnchor", "Automatically places glowstone before placing an end crystal", Category.COMBAT);
+        super("AutoAnchor", "Automatically places crystals on target blocks", Category.COMBAT, true, false, false);
     }
 
     @Override
     public void onTick() {
         if (mc.player == null) return;
 
-        int glowSlot = findGlowstoneSlot();
-        int anchorSlot = mc.player.getInventory().selectedSlot;
+        int anchorSlot = mc.player.getInventory().getSelected();
+        int glowSlot = findItem(Items.GLOWSTONE);
 
-        if (glowSlot != -1) {
-            mc.player.getInventory().selectedSlot = glowSlot;
-            BlockPos placePos = mc.player.blockPosition().above();
-            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(placePos), null, placePos, false));
-        }
+        if (glowSlot == -1) return;
 
-        // Switch back to original slot
-        mc.player.getInventory().selectedSlot = anchorSlot;
+        mc.player.getInventory().setSelected(glowSlot);
+        // TODO: Place glowstone or anchor block logic here
+        mc.player.getInventory().setSelected(anchorSlot); // switch back
     }
 
-    private int findGlowstoneSlot() {
+    private int findItem(Items target) {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = mc.player.getInventory().getItem(i);
-            if (stack != null && stack.getItem() == Items.GLOWSTONE) return i;
+            if (stack.getItem() == target) return i;
         }
         return -1;
     }

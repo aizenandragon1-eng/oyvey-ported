@@ -1,62 +1,40 @@
 package me.alpha432.oyvey.features.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 
 public class AutoAnchor extends Module {
 
-    private long lastTime = 0;
-    private final long delay = 150; // milliseconds
-    private int lastHotbar = 0;
-
     public AutoAnchor() {
-        super("AutoAnchor", "Places glowstone automatically when holding anchor", Category.COMBAT);
+        super("AutoAnchor", "Automatically places glowstone before placing an end crystal", Category.COMBAT);
     }
 
-    public void onUpdate() {
-        if (mc.player == null || mc.level == null) return;
+    @Override
+    public void onTick() {
+        if (mc.player == null) return;
 
-        if (System.currentTimeMillis() - lastTime < delay) return;
-        lastTime = System.currentTimeMillis();
+        int glowSlot = findGlowstoneSlot();
+        int anchorSlot = mc.player.getInventory().selectedSlot;
 
-        // Check if holding anchor
-        ItemStack hand = mc.player.getMainHandItem();
-        if (hand.getItem() != Items.RESPAWN_ANCHOR) return;
+        if (glowSlot != -1) {
+            mc.player.getInventory().selectedSlot = glowSlot;
+            BlockPos placePos = mc.player.blockPosition().above();
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(placePos), null, placePos, false));
+        }
 
-        // Place position: above player
-        BlockPos targetPos = mc.player.blockPosition().above();
-
-        // Find glowstone in inventory
-        int glowSlot = findItem(Items.GLOWSTONE);
-        if (glowSlot == -1) return;
-
-        int windowSlot = glowSlot < 9 ? glowSlot + 36 : glowSlot;
-
-        // Swap to glowstone
-        mc.gameMode.handleInventoryMouseClick(0, windowSlot, 0, net.minecraft.world.inventory.ClickType.PICKUP, mc.player);
-
-        // Place glowstone
-        mc.player.swing(InteractionHand.MAIN_HAND);
-        mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND,
-                new BlockHitResult(new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.5, targetPos.getZ() + 0.5),
-                        Direction.UP, targetPos, false));
-
-        // Swap back to anchor
-        int anchorSlot = mc.player.getInventory().selectedSlot; // works in your fork
-        int anchorWindow = anchorSlot < 9 ? anchorSlot + 36 : anchorSlot;
-        mc.gameMode.handleInventoryMouseClick(0, anchorWindow, 0, net.minecraft.world.inventory.ClickType.PICKUP, mc.player);
+        // Switch back to original slot
+        mc.player.getInventory().selectedSlot = anchorSlot;
     }
 
-    private int findItem(Items target) {
-        for (int i = 0; i < 36; i++) {
+    private int findGlowstoneSlot() {
+        for (int i = 0; i < 9; i++) {
             ItemStack stack = mc.player.getInventory().getItem(i);
-            if (stack.getItem() == target) return i;
+            if (stack != null && stack.getItem() == Items.GLOWSTONE) return i;
         }
         return -1;
     }

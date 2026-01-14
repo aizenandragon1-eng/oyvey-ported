@@ -1,15 +1,14 @@
 package me.alpha432.oyvey.features.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
-import me.alpha432.oyvey.features.setting.Setting;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class AutoTotem extends Module {
-    public Setting<Integer> health = register(new Setting<>("Health", 16, 1, 36));
+    public int health = 16; // default
 
     public AutoTotem() {
-        super("AutoTotem", "Automatically switches to totem", Category.COMBAT, true, false, false);
+        super("AutoTotem", "Automatically switches to totem", Category.COMBAT);
     }
 
     @Override
@@ -17,8 +16,8 @@ public class AutoTotem extends Module {
         if (mc.player == null) return;
 
         int totemSlot = findTotemSlot();
-        if (totemSlot != -1 && mc.player.getInventory().getSelected() != totemSlot) {
-            mc.player.getInventory().setSelected(totemSlot);
+        if (totemSlot != -1 && mc.player.getInventory().selected != totemSlot) {
+            mc.player.getInventory().selected = totemSlot;
         }
     }
 
@@ -30,3 +29,4 @@ public class AutoTotem extends Module {
         return -1;
     }
 }
+

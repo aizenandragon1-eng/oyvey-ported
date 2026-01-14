@@ -9,6 +9,8 @@ import me.alpha432.oyvey.features.modules.Module;
 import me.alpha432.oyvey.features.modules.client.ClickGui;
 import me.alpha432.oyvey.features.modules.client.HudEditor;
 import me.alpha432.oyvey.features.modules.client.Notifications;
+import me.alpha432.oyvey.features.modules.combat.AutoAnchor;
+import me.alpha432.oyvey.features.modules.combat.AutoTotem;
 import me.alpha432.oyvey.features.modules.hud.Coordinates;
 import me.alpha432.oyvey.features.modules.hud.Watermark;
 import me.alpha432.oyvey.features.modules.misc.MCF;
@@ -18,8 +20,6 @@ import me.alpha432.oyvey.features.modules.player.FastPlace;
 import me.alpha432.oyvey.features.modules.player.NoFall;
 import me.alpha432.oyvey.features.modules.player.Velocity;
 import me.alpha432.oyvey.features.modules.render.BlockHighlight;
-import me.alpha432.oyvey.features.modules.combat.AutoAnchor;
-import me.alpha432.oyvey.features.modules.combat.AutoTotem;
 import me.alpha432.oyvey.util.traits.Jsonable;
 import me.alpha432.oyvey.util.traits.Util;
 
@@ -36,6 +36,8 @@ public class ModuleManager implements Jsonable, Util {
         register(new HudEditor());
         register(new ClickGui());
         register(new Notifications());
+        register(new AutoTotem());
+        register(new AutoAnchor());
         register(new MCF());
         register(new Step());
         register(new ReverseStep());
@@ -43,10 +45,6 @@ public class ModuleManager implements Jsonable, Util {
         register(new Velocity());
         register(new BlockHighlight());
         register(new NoFall());
-
-        // Combat modules
-        register(new AutoAnchor());
-        register(new AutoTotem());
     }
 
     public void register(Module module) {
@@ -129,3 +127,4 @@ public class ModuleManager implements Jsonable, Util {
         return "modules.json";
     }
 }
+

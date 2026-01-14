@@ -1,29 +1,28 @@
 package me.alpha432.oyvey.features.modules.combat;
 
 import me.alpha432.oyvey.features.modules.Module;
-import me.alpha432.oyvey.features.setting.Setting;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class AutoAnchor extends Module {
-    public Setting<Long> delay = register(new Setting<>("Delay", 150L, 50L, 1000L));
+    public long delay = 150; // default delay in ms
 
     public AutoAnchor() {
-        super("AutoAnchor", "Automatically places crystals on target blocks", Category.COMBAT, true, false, false);
+        super("AutoAnchor", "Automatically places crystals on target blocks", Category.COMBAT);
     }
 
     @Override
     public void onTick() {
         if (mc.player == null) return;
 
-        int anchorSlot = mc.player.getInventory().getSelected();
+        int anchorSlot = mc.player.getInventory().selected;
         int glowSlot = findItem(Items.GLOWSTONE);
 
         if (glowSlot == -1) return;
 
-        mc.player.getInventory().setSelected(glowSlot);
-        // TODO: Place glowstone or anchor block logic here
-        mc.player.getInventory().setSelected(anchorSlot); // switch back
+        mc.player.getInventory().selected = glowSlot;
+        // TODO: Add crystal placement logic here
+        mc.player.getInventory().selected = anchorSlot; // switch back
     }
 
     private int findItem(Items target) {
@@ -34,3 +33,4 @@ public class AutoAnchor extends Module {
         return -1;
     }
 }
+
